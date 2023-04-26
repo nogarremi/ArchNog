@@ -1,0 +1,52 @@
+name: Archive old version
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  approved:
+    name: PR Approved
+    if: github.event.review.state == 'approved' &&  (github.event.review.author_association == 'COLLABORATOR' ||  github.event.review.author_association == 'OWNER')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Main Checkout
+        id: checkout-main
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          path: "main"
+
+      - name: PR Checkout
+        id: checkout-pr
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          path: "approved_pr"
+
+      - name: diffs
+        id: is_there_new_version
+        run: |
+          gitdiff=$(git diff --name-only main/ approved_pr/ | awk '{if ($1=="approved_pr/RELEASE") print $1}')
+          if [[ $gitdiff == "approved_pr/RELEASE" ]]; then
+            read -r old_rel<main/RELEASE
+            new_archive="approved_pr/archives/$old_rel"
+            mkdir "approved_pr/archives"
+            mkdir $new_archive/
+            rm -rf $new_archive/*
+            cp main/ArchNog-latest.sh $new_archive/ArchNog.sh
+            cp main/ArchNog_chroot.sh $new_archive/ArchNog_chroot.sh
+            echo "diff_valid=true" >> $GITHUB_OUTPUT
+          else
+            echo "diff_valid=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update PR
+        id: update-pr
+        if: steps.is_there_new_version.outputs.diff_valid == 'true'
+        run: |
+          cd approved_pr/
+          git config user.name 'GitHub Actions'
+          git config user.email 'nogarremi@users.noreply.github.com'
+          git add .
+          git commit -am "Archived previous version"
+          git push
