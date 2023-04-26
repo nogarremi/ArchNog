@@ -18,9 +18,12 @@ locale-gen
 
 # Create user
 read -rep 'Username: ' username
-read -srep 'Password: ' password
+read -srep 'Password: ' unencrypted
+
+mapfile -t password < <(openssl passwd -6 $unencrypted)
+
 groupadd sudoers
-useradd --btrfs-subvolume-home -U -p $password -G sudoers  $username
+useradd --btrfs-subvolume-home -U -m -p $password -G sudoers  $username
 
 echo "%sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
 
@@ -28,15 +31,12 @@ echo "%sudoers ALL=(ALL:ALL) ALL" >> /etc/sudoers
 passwd -l root
 usermod -s /usr/sbin/nologin root
 
-read -n1 -srp "Press enter to coninue"
+git clone https://aur.archlinux.org/yay-git.git
+chown -R $username:$username yay-git
 
 ## Su section
-su - $username
-
-git clone https://aur.archlinux.org/yay-git.git
-cd yay-git
+sudo -i -u $username bash <<EOF
+cd /yay-git
 makepkg -si --noconfirm
-cd ..
-
-yay -S --noconfirm waybar-hyprland wlogout swaylock-effects sddm-git \
-	nordic-theme otf-sora ttf-icomoon-feather
+yay -S --noconfirm waybar-hyprland wlogout swaylock-effects sddm-git nordic-theme otf-sora ttf-icomoon-feather
+EOF
