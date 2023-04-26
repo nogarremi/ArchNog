@@ -12,6 +12,7 @@ if ! [[ ${VALID_DRIVES[*]} =~ "$BTRFS_DRIVE" ]]; then
 fi
 
 # Making parts
+echo "Creating partitions..."
 fdisk $BTRFS_DRIVE <<EOF
 g
 n
@@ -41,7 +42,8 @@ mkfs.btrfs -L main -f /dev/sda3
 mkswap -L swap /dev/sda2
 mkfs.fat -F 32 -n bootloader /dev/sda1
 
-read -n1 -srp "Press enter to coninue"
+echo "Created partitions."
+echo "Creating BTRFS subvolumes..."
 
 # Butter Subvols
 mount --mkdir /dev/sda3 /mnt/root
@@ -56,7 +58,8 @@ btrfs subv create /mnt/root/root/var/log
 btrfs subv create /mnt/root/root/var/log/audit
 btrfs subv create /mnt/root/root/shm
 
-read -n1 -srp "Press enter to coninue"
+echo "BTRFS subvolumes created."
+echo "Mounting subvolumes..."
 
 # Mounting for chroot
 swapon /dev/sda2
@@ -71,12 +74,24 @@ mount --mkdir --bind /mnt/root/root/var/log /mnt/@/var/log
 mount --mkdir --bind /mnt/root/root/var/log/audit /mnt/@/var/log/audit
 mount --mkdir --bind /mnt/root/root/shm /mnt/@/dev/shm
 
-read -n1 -srp "Press enter to coninue"
+echo "Mounted subvolumes."
+echo "Determining best upstreams..."
 
 reflector --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+
+echo "Determined upstreams."
+echo "Copying sub-script..."
+
 cp ${current_pwd}/ArchNog_chroot.sh /mnt/@/ArchNog_chroot.sh
 
-read -n1 -srp "Press enter to coninue"
+echo "Copied sub-script."
+echo "Generating fstab..."
+
+mkdir /mnt/@/etc
+genfstab -U mnt/@ >> /mnt/@/etc/fstab
+
+echo "Generated fstab."
+echo "Pacstrapping..."
 
 # Strapping into the installation
 pacman -Scc --noconfirm
@@ -90,4 +105,10 @@ pacstrap -K /mnt/@ base base-devel util-linux man-db man-pages texinfo ntp \
 	ttf-jetbrains-mono-nerd ttf-iosevka-nerd adobe-source-code-pro-fonts swaylock \
 	waybar
 
+echo "Pacstrapped."
+echo "Chrooting..."
+
 arch-chroot /mnt/@ ./ArchNog_chroot.sh
+
+echo "Chrooted."
+echo "Completed."
