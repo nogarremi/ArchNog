@@ -83,6 +83,7 @@ echo "Determined upstreams."
 echo "Copying sub-script..."
 
 cp ${current_pwd}/ArchNog_chroot.sh /mnt/@/ArchNog_chroot.sh
+chmod +x /mnt/@/ArchNog_chroot.sh
 cp -R ${current_pwd}/dotconfigs /mnt/@/dotconfigs
 
 echo "Copied sub-script."
