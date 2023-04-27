@@ -84,7 +84,7 @@ echo "Copying sub-script..."
 
 cp ${current_pwd}/ArchNog_chroot.sh /mnt/@/ArchNog_chroot.sh
 chmod +x /mnt/@/ArchNog_chroot.sh
-cp -R ${current_pwd}/dotconfigs /mnt/@/dotconfigs
+cp -R ${current_pwd}/dotconfig /mnt/@/dotconfig
 
 echo "Copied sub-script."
 echo "Generating fstab..."
