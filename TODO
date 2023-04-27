@@ -19,11 +19,10 @@ TODO Installation Script:
 		[*] /var/log
 		[*] /var/log/audit
 		[*] /dev/shm
-	[ ] Mount root partition
+	[*] Mount root partition
 		[*] Mount /
 		[*] Mount /@
 		[*] Mount /efi
-		[ ] Mount /home
 		[*] Mount /usr
 		[*] Mount /opt
 		[*] Mount /tmp
@@ -54,7 +53,6 @@ TODO Installation Script:
 		[*] bluez
 		[*] blueman
 		[*] obsidian
-			[ ] write-good?
 		[*] Firefox
 		[*] Discord
 		[*] Python
@@ -66,8 +64,7 @@ TODO Installation Script:
 		[ ] Guild Wars 1
 			[ ] Multi Launcher?
 		[*] Package Manager
-			[*] Yay?
-			[*] Nix?
+			[*] Yay
 		[*] File Browser
 		[*] Fonts
 		[*] Wayland

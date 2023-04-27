@@ -83,6 +83,7 @@ echo "Determined upstreams."
 echo "Copying sub-script..."
 
 cp ${current_pwd}/ArchNog_chroot.sh /mnt/@/ArchNog_chroot.sh
+cp -R ${current_pwd}/dotconfigs /mnt/@/dotconfigs
 
 echo "Copied sub-script."
 echo "Generating fstab..."
@@ -98,12 +99,11 @@ pacman -Scc --noconfirm
 pacstrap -K /mnt/@ base base-devel util-linux man-db man-pages texinfo ntp \
 	btrfs-progs git zsh vis gcc make curl htop neofetch reflector linux-firmware \
 	networkmanager bluez blueman obsidian firefox discord python code rofi \
-	kitty hyprland polkit swaybg viewnior  pavucontrol starship wl-clipboard \
+	kitty hyprland polkit-gnome swaybg viewnior pavucontrol starship wl-clipboard \
 	ffmpeg ffmpegthumbnailer tumbler playerctl noise-suppression-for-voice \
-	thunar thunar-archive-plugin swaylock pamixer nix papirus-icon-theme dunst \
+	thunar thunar-archive-plugin swaylock pamixer papirus-icon-theme dunst \
 	ttf-nerd-fonts-symbols-common otf-firamono-nerd inter-font ttf-fantasque-nerd \
-	ttf-jetbrains-mono-nerd ttf-iosevka-nerd adobe-source-code-pro-fonts swaylock \
-	waybar
+	ttf-jetbrains-mono-nerd ttf-iosevka-nerd adobe-source-code-pro-fonts
 
 echo "Pacstrapped."
 echo "Chrooting..."
